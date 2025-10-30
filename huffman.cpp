@@ -135,11 +135,11 @@ void Huffman::saveEncodedFile()
     outFile.open(outFileName, ios::out | ios::binary);
 
     string in = ""; // store encoded data
-    string s = "";  // storing temp data
+    string s = "";  // storing temp data (code)
     char ch;        // read character from file
 
     // Saving Meta Data
-    //{minHeapSize}{mihHeap}
+    //{minHeapSize}{mihHeap} //first byte of .huf file no. denoting unique character in input files 
     in += (char)heap.size();
     priority_queue<Node *, vector<Node *>, Compare> pq(heap);
     while (!pq.empty())
@@ -205,14 +205,14 @@ void Huffman::getTreeFromEncodedFile()
     {
         char ch;
         unsigned char code[16];
-        inFile.read(&ch, 1);
-        inFile.read(reinterpret_cast<char *>(code), 16);
+        inFile.read(&ch, 1); //actual data
+        inFile.read(reinterpret_cast<char *>(code), 16); //it's code
 
         // convert decimal char to binary to obtain code
         string codeBinary = "";
         for (int i = 0; i < 16; i++)
         {
-            codeBinary += decimalToBinary(code[i]);
+            codeBinary += decimalToBinary(code[i]);  // it is directly typecated to (int) int called function.
         }
 
         int k = 0;
@@ -233,7 +233,7 @@ void Huffman::saveDecodedFile()
     inFile.open(inFileName, ios::in | ios::binary);
     outFile.open(outFileName, ios::out); // Open Input and output files
 
-    unsigned char size;                              // size of huffman tree
+    unsigned char size;                              // size of huffman tree (unique chars in codebook)
     inFile.read(reinterpret_cast<char *>(&size), 1); // Read size i.e stored as 1st byte in encoded file.
 
     char cnt0;                  // no. of zeroes appended to make size 8
@@ -257,7 +257,7 @@ void Huffman::saveDecodedFile()
     string path;
     for (int i = 0; i < encodedText.size() - 1; i++)
     { // ignore last cnt0, so -1.
-        path = decimalToBinary(encodedText[i]);
+        path = decimalToBinary(encodedText[i]);  // typecasted to (int) in above function
         if (i == encodedText.size() - 2)
         { // if last byte, ignore inserted 0 bits
             path = path.substr(0, 8 - cnt0);
